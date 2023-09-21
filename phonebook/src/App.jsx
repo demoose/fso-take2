@@ -3,6 +3,7 @@ import Persons from "./Persons";
 import PersonForm from "./PersonForm";
 import Filter from "./Filter";
 import axios from "axios";
+import personService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -13,11 +14,9 @@ const App = () => {
   const [filterName, setFilterName] = useState("");
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-      })
+    personService.getAll().then(response => {
+      setPersons(response)
+    })
   }, [])
 
   const personNamesOnly = () => {
@@ -37,9 +36,8 @@ const App = () => {
       const personObject = {
         name: newName,
         number: newNumber,
-        id: persons.length + 1,
       };
-      setPersons(persons.concat(personObject));
+      personService.create(personObject).then(response => setPersons(persons.concat(response)))
     }
 
     setNewName("");
@@ -64,6 +62,14 @@ const App = () => {
       ? persons
       : persons.filter((person) => person.name.includes(filterName));
 
+  const handleDelete = (id) => {
+    if(window.confirm(`Are you sure you want to delete ${persons.find((person) => person.id === id).name}?`)) {
+      personService
+      .remove(id)
+      .then(setPersons(persons.filter(person => person.id !== id)))
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -77,7 +83,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons peopleToShow={peopleToShow} />
+      <Persons peopleToShow={peopleToShow} handleDelete={handleDelete} />
     </div>
   );
 };
