@@ -67,3 +67,23 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.notification {
+  color: green;
+  font-size: 15px;
+  border: solid;
+  border-radius: 5px;
+  background: pink;
+}
+
+.error {
+  font-style: italic;
+  color: red;
+  text-transform: capitalize;
+}
+
+.success {
+  font-style: normal;
+  color: orange;
+  text-transform: capitalize;
+}
