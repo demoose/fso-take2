@@ -2,8 +2,8 @@ function Persons({peopleToShow, handleDelete}) {
   return (
     <div>
       {peopleToShow.map((person) => (
-        <div>
-        <p key={person.id}>
+        <div key={person.id}>
+        <p >
           {person.name} / {person.number} 
         </p>
         <button onClick={() => handleDelete(person.id)}>delete</button>

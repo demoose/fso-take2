@@ -31,7 +31,10 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault();
     if (checkDuplicate(newName)) {
-      alert(`${newName} is already in the phonebook`);
+      if(window.confirm(`${newName} is already in the phonebook. Do you want to replace the old number with the new one?`)) {
+        const person = persons.find((person) => person.name === newName)
+        handleUpdate(person)
+      }
     } else {
       const personObject = {
         name: newName,
@@ -68,6 +71,14 @@ const App = () => {
       .remove(id)
       .then(setPersons(persons.filter(person => person.id !== id)))
     }
+  }
+
+  const handleUpdate = (person) => {
+    const id = person.id
+    const personObject = {...person, number: newNumber}
+    personService
+      .update(id, personObject)
+      .then(response => {setPersons(persons.map(person => person.id !== id ? person : response))})
   }
 
   return (
