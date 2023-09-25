@@ -38,6 +38,10 @@ function App() {
     console.log(filteredCountries);
   };
 
+  const handleShow = (countryName) => {
+    setCountriesToShow([countryName]);
+  };
+
   return (
     <>
       <div>
@@ -46,32 +50,40 @@ function App() {
         <ul>
           {countriesToShow.length > 10 ? (
             <p>Too many countries. Search for a longer string</p>
+          ) : countriesToShow.length == 1 ? (
+            countriesToShow.map((country) => {
+              return (
+                <div key={country.cioc}>
+                  <h1>{country.name.common}</h1>
+                  <p>Capital: {country.capital}</p>
+                  <p>Population {country.population}</p>
+                  <h4>Languages:</h4>
+                  {Object.entries(country.languages).map(([key, value]) => {
+                    return <li>{value}</li>;
+                  })}
+                  <img
+                    width="100px"
+                    height="100px"
+                    src={country.flags.svg}
+                    alt={country.flags.alt}
+                  />
+                </div>
+              );
+            })
           ) : (
             countriesToShow.map((country) => {
-              return <li key={country.cioc}>{country.name.common}</li>;
+              return (
+                <li key={country.cioc}>
+                  <div>
+                    <p>
+                      {country.name.common}
+                      <button onClick={() => handleShow(country)}>show</button>
+                    </p>
+                  </div>
+                </li>
+              );
             })
           )}
-          {countriesToShow.length == 1
-            ? countriesToShow.map((country) => {
-                return (
-                  <div key={country.cioc}>
-                    <h1>{country.name.common}</h1>
-                    <p>Capital: {country.capital}</p>
-                    <p>Population {country.population}</p>
-                    <h4>Languages:</h4>
-                    {Object.entries(country.languages).map(([key, value]) => {
-                      return <li>{value}</li>;
-                    })}
-                    <img
-                      width="100px"
-                      height="100px"
-                      src={country.flags.svg}
-                      alt={country.flags.alt}
-                    />
-                  </div>
-                );
-              })
-            : ""}
         </ul>
       </div>
     </>
