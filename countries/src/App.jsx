@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import axios from "axios";
 
@@ -8,20 +6,32 @@ function App() {
   const [value, setValue] = useState("");
   const [countries, setCountries] = useState([]);
   const [countriesToShow, setCountriesToShow] = useState([]);
+  const [weather, setWeather] = useState(null);
+  const apiURL = "http://api.openweathermap.org/data/2.5/weather?q=";
 
   const baseUrl = "https://studies.cs.helsinki.fi/restcountries/api/all";
-
-  // const getAllCountries = () => {
-  //   axios.get(baseUrl).then((response) => {
-  //     return response.data;
-  //   });
-  // };
 
   useEffect(() => {
     axios.get(baseUrl).then((response) => {
       setCountries(response.data);
     });
   }, []);
+
+  useEffect(() => {
+    if (countriesToShow.length === 1) {
+      const country = countriesToShow[0];
+      axios
+        .get(
+          `${apiURL}${country.capital}&APPID=${
+            import.meta.env.VITE_OPENWEATHER_KEY
+          }&units=metric`
+        )
+        .then((response) => {
+          setWeather([response.data]);
+        });
+    }
+    console.log(weather);
+  }, [countriesToShow]);
 
   useEffect(() => {
     const filteredCountries = countries.filter((country) =>
@@ -67,6 +77,19 @@ function App() {
                     src={country.flags.svg}
                     alt={country.flags.alt}
                   />
+                  {weather?.length === 1 && (
+                    <div>
+                      <h3>We have weather data</h3>
+                      <p>Temperature: {weather[0].main.temp} celcius</p>
+                      <img
+                        src={`https://openweathermap.org/img/wn/${weather[0].weather[0].icon}@2x.png`}
+                      />
+                      <p>
+                        Wind: {weather[0].wind.speed} m/s at{" "}
+                        {weather[0].wind.deg} Degrees
+                      </p>
+                    </div>
+                  )}
                 </div>
               );
             })
@@ -74,12 +97,8 @@ function App() {
             countriesToShow.map((country) => {
               return (
                 <li key={country.cioc}>
-                  <div>
-                    <p>
-                      {country.name.common}
-                      <button onClick={() => handleShow(country)}>show</button>
-                    </p>
-                  </div>
+                  {country.name.common}
+                  <button onClick={() => handleShow(country)}>show</button>
                 </li>
               );
             })
