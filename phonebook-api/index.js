@@ -1,6 +1,23 @@
 const express = require("express");
+const morgan = require("morgan");
+
 const app = express();
+
+const requestLogger = (request, response, next) => {
+  console.log("Method:", request.method);
+  console.log("Path:  ", request.path);
+  console.log("Body:  ", request.body);
+  console.log("---");
+  next();
+};
+
 app.use(express.json());
+morgan.token("body", (req) => {
+  return JSON.stringify(req.body);
+});
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :body")
+);
 
 let phonebook = [
   {
@@ -86,11 +103,6 @@ app.post("/api/phonebook", (request, response) => {
     });
   }
 
-  // if (checkDuplicateNumber(body.number)) {
-  //   return response.status(400).json({
-  //     error: `${body.name} is already present in the phonebook.`,
-  //   });
-  // }
   const person = {
     id: Math.random() * 100,
     name: body.name,
